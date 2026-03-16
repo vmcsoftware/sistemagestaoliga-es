@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoginPage } from './pages/LoginPage';
+import { HomePage } from './pages/HomePage';
 import { Dashboard } from './pages/Dashboard';
 import { ContatosPage } from './pages/ContatosPage';
 import { RelatoriosPage } from './pages/RelatoriosPage';
@@ -12,10 +13,13 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const { token } = useAuth();
+
   return (
     <Router>
       <AuthProvider>
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/dashboard"
@@ -41,7 +45,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </Router>

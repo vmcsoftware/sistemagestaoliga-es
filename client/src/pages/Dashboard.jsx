@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Phone, CheckCircle, AlertCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { apiCall } from '../services/api';
-import { Navbar } from './Navbar';
+import { Navbar } from '../components/Navbar';
 
 export const Dashboard = () => {
   const [metricas, setMetricas] = useState(null);

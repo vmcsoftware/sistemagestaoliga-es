@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [usuario, setUsuario] = useState(null);
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
       if (data.sucesso) {
-        setUsuario(data.usuario);
+        setUser(data.usuario);
         setToken(data.token);
         localStorage.setItem('token', data.token);
         return { sucesso: true };
@@ -32,13 +32,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(() => {
-    setUsuario(null);
+    setUser(null);
     setToken(null);
     localStorage.removeItem('token');
   }, []);
 
   return (
-    <AuthContext.Provider value={{ usuario, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
