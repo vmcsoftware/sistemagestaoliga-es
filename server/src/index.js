@@ -1,12 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import { initializeFirebase } from './config/database.js';
-import { config } from './config/config.js';
+import { initializeFirebase } from '../config/database.js';
+import { config } from '../config/config.js';
 
 // Importar rotas
-import authRoutes from './src/routes/authRoutes.js';
-import contatoRoutes from './src/routes/contatoRoutes.js';
-import dashboardRoutes from './src/routes/dashboardRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import contatoRoutes from './routes/contatoRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 const app = express();
 

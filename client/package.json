@@ -15,8 +15,7 @@
     "date-fns": "^2.30.0",
     "react-hot-toast": "^2.4.1",
     "xlsx": "^0.18.5",
-    "jspdf": "^2.5.1",
-    "@react-pdf/renderer": "^3.13.0"
+    "jspdf": "^2.5.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.3",

@@ -1,10 +1,10 @@
 import { 
   criarContato, 
   obterContatoPorId, 
-  listarContatos, 
+  listarContatos as listarContatosBd, 
   atualizarContato, 
-  deletarContato,
-  obterContatosPendentes,
+  deletarContato as deletarContatoBd,
+  obterContatosPendentes as obterContatosPendentesBd,
   obterContatoPorCpfCnpj 
 } from '../models/ContatoFirebase.js';
 import { criarRegistroLigacao, obterHistoricoContato } from '../models/HistoricoLigacaoFirebase.js';
@@ -44,7 +44,7 @@ export const listarContatos = async (req, res) => {
       filtros.busca = busca;
     }
 
-    const contatos = await listarContatos(filtros);
+    const contatos = await listarContatosBd(filtros);
     
     const total = contatos.length;
     const contatosPaginados = contatos.slice(skip, skip + parseInt(limite));
@@ -157,7 +157,7 @@ export const deletarContato = async (req, res) => {
       return res.status(404).json({ erro: 'Contato não encontrado' });
     }
 
-    await deletarContato(id);
+    await deletarContatoBd(id);
 
     res.json({
       sucesso: true,
@@ -170,7 +170,7 @@ export const deletarContato = async (req, res) => {
 
 export const obterContatosPendentes = async (req, res) => {
   try {
-    const contatos = await obterContatosPendentes();
+    const contatos = await obterContatosPendentesBd();
 
     res.json({
       sucesso: true,
