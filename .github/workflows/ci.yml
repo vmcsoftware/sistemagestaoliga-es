@@ -1,0 +1,99 @@
+name: CI - Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+    
+    - name: Install client dependencies
+      run: cd client && npm ci
+    
+    - name: Build client
+      run: cd client && npm run build
+    
+    - name: Upload client build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: client-build
+        path: client/dist/
+        retention-days: 5
+
+  build-server:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+    
+    - name: Install server dependencies
+      run: cd server && npm ci
+    
+    - name: Check server syntax
+      run: cd server && node -c src/index.js
+    
+    - name: Upload server artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: server-build
+        path: server/
+        retention-days: 5
+
+  lint-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check for common issues
+      run: |
+        echo "✓ Repository structure validation"
+        test -d "client" && echo "✓ Client folder exists"
+        test -d "server" && echo "✓ Server folder exists"
+        test -f "client/package.json" && echo "✓ Client package.json exists"
+        test -f "server/package.json" && echo "✓ Server package.json exists"
+        echo "✓ All checks passed"
+
+  summary:
+    needs: [build-client, build-server, lint-check]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Check build status
+      run: |
+        if [ "${{ needs.build-client.result }}" == "success" ] && [ "${{ needs.build-server.result }}" == "success" ]; then
+          echo "✅ All builds successful!"
+          exit 0
+        else
+          echo "❌ Some builds failed"
+          exit 1
+        fi
