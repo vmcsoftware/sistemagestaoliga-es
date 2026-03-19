@@ -62,39 +62,35 @@ Save → Aguarde 2-3 minutos
 
 URL será: `https://vmcsoftware.github.io/sistemagestaoliga-es/`
 
-### 2️⃣ **Deploy Backend em Railway** (10 minutos)
+### 2️⃣ **Converter Servidor → Cloud Functions** (30-60 minutos)
 ```
-1. Acesse https://railway.app
-2. Conecte GitHub
-3. Selecione repositório
-4. Railway faz deploy automático
-5. Copie a URL do app
-```
-
-Será algo como: `https://seu-app-prod.railway.app`
-
-### 3️⃣ **Adicionar Variáveis Firebase em Railway** (15 minutos)
-```
-Railway → Variables
-Adicione 12 variáveis (ver RAILWAY_FIREBASE_SETUP.md):
-├─ FIREBASE_PROJECT_ID
-├─ FIREBASE_DATABASE_URL
-├─ FIREBASE_API_KEY
-├─ FIREBASE_AUTH_DOMAIN
-├─ FIREBASE_STORAGE_BUCKET
-├─ FIREBASE_MESSAGING_SENDER_ID
-├─ FIREBASE_APP_ID
-├─ FIREBASE_MEASUREMENT_ID
-├─ NODE_ENV=production
-├─ PORT=3000
-├─ JWT_SECRET=seu_secret
-└─ CLIENT_URL=seu_url_github_pages
+1. firebase init functions (cria pasta functions/)
+2. Migrar código do server/ para functions/
+3. Converter Express routes → Cloud Functions
+4. Testar localmente: firebase emulators:start
 ```
 
-### 4️⃣ **Adicionar GitHub Secret** (2 minutos)
+Guia completo: `FIREBASE_CLOUD_FUNCTIONS.md`
+
+### 3️⃣ **Deploy das Funções** (5 minutos)
 ```
-GitHub → Settings → Secrets → Actions
-Add: VITE_API_URL=https://seu-app-prod.railway.app
+firebase deploy --only functions
+
+Resultado:
+├─ auth_login → https://us-central1-agendaccb-73569.cloudfunctions.net/auth_login
+├─ auth_register → https://us-central1-agendaccb-73569.cloudfunctions.net/auth_register
+├─ contatos_list → https://us-central1-agendaccb-73569.cloudfunctions.net/contatos_list
+└─ ... (mais funções)
+```
+
+### 4️⃣ **Atualizar URLs no Frontend** (5 minutos)
+```
+client/src/config/firebase-functions.js:
+├─ LOGIN: 'https://us-central1-agendaccb-73569.cloudfunctions.net/auth_login'
+├─ REGISTER: 'https://us-central1-agendaccb-73569.cloudfunctions.net/auth_register'
+└─ ... (mais endpoints)
+
+E usar em: client/src/services/api.js
 ```
 
 ### 5️⃣ **Testar Tudo**
@@ -115,30 +111,25 @@ Add: VITE_API_URL=https://seu-app-prod.railway.app
 - [ ] Aguardei 2-3 minutos
 - [ ] `https://vmcsoftware.github.io/sistemagestaoliga-es/` carrega
 
-### Railway Backend
-- [ ] Criei conta em railway.app
-- [ ] Conectei GitHub
-- [ ] Projeto foi criado automaticamente
-- [ ] Build passou (sem erros)
-- [ ] Estou vendo a URL pública
+### Firebase Cloud Functions
+- [ ] `firebase init functions` criou a pasta
+- [ ] Migrei código do server/ para functions/
+- [ ] Converti routes Express → Cloud Functions
+- [ ] Testei localmente: `firebase emulators:start`
+- [ ] Fiz deploy: `firebase deploy --only functions`
+- [ ] Copiei URLs das funções
+- [ ] Atualizei `firebase-functions.js` no frontend
 
-### Firebase em Railway
-- [ ] Copiei as 8 credenciais Firebase
-- [ ] Adicionei todas as 12 variáveis
-- [ ] Railway reiniciou (2-3 min)
-- [ ] `/api/health` retorna 200
-
-### GitHub Secrets
-- [ ] Adicionei `VITE_API_URL` nos secrets
-- [ ] O valor é a URL do Railway
-
-### Teste Final
+### GitHub Pages + Cloud Functions
 - [ ] Frontend carrega em GitHub Pages
 - [ ] Página redireciona para `/login`
-- [ ] Login funciona
+- [ ] Login chama Cloud Function (F12 Network)
+
+### Teste Final
 - [ ] Dashboard carrega dados Firebase
 - [ ] Contatos aparecem
 - [ ] Ligações podem ser registradas
+- [ ] Operações de CRUD funcionam
 
 ---
 
@@ -148,8 +139,8 @@ Add: VITE_API_URL=https://seu-app-prod.railway.app
 Frontend:
   https://vmcsoftware.github.io/sistemagestaoliga-es/
 
-Backend API:
-  https://seu-app-prod.railway.app/api
+Backend API (Cloud Functions):
+  https://us-central1-agendaccb-73569.cloudfunctions.net/
 
 Login:
   https://vmcsoftware.github.io/sistemagestaoliga-es/login
@@ -167,27 +158,40 @@ Dashboard:
 - Espere 5 minutos para cache
 - Faça hard refresh (Ctrl+Shift+R)
 
-### "API não responde"
-- Verifique se Railway tem as 12 variáveis
-- Veja logs do Railway (Logs → últimas mensagens)
-- Confirme URL em GitHub Secrets
+### "Cloud Function não responde"
+- Verifique se firebase deploy completou sem erros
+- Veja logs: `firebase functions:log`
+- Teste endpoint com curl (copie URL exata)
 
 ### "Login falha"
 - Verifique console do navegador (F12)
-- Veja se API URL está correta
-- Firebase credenciais corretas em Railway?
+- URLs das functions estão corretas em `firebase-functions.js`?
+- Firebase credentials estão OK?
 
 ### "CORS error"
-- CLIENT_URL foi adicionada em Railway?
-- URL está exatamente como GitHub Pages?
+- CORS está configurado em cada Cloud Function?
+- origin está com https://vmcsoftware.github.io?
+
+### "Erro ao fazer deploy"
+```bash
+# Verifique autenticação
+firebase logout
+firebase login
+
+# Verifique projeto
+firebase projects:list
+
+# Qual está selecionado?
+firebase use agendaccb-73569
+```
 
 ---
 
 ## 📚 Documentação Disponível
 
 Para detalhes completos, veja:
-- `RAILWAY_FIREBASE_SETUP.md` - Como adicionar variáveis
-- `DEPLOY_BACKEND.md` - Deploy passo a passo
+- `FIREBASE_CLOUD_FUNCTIONS.md` - Guia completo (LEIA ISTO!)
+- `NO_RAILWAY.md` - Por que serverless é melhor
 - `AUTH_FLOW.md` - Fluxo de autenticação
 - `FIREBASE_ONLY.md` - Sobre o Firebase
 - `GITHUB_PAGES_SETUP.md` - Deploy GitHub Pages
@@ -201,7 +205,7 @@ Para detalhes completos, veja:
 ✅ Git sincronizado com GitHub  
 ✅ Workflows CI/CD configurados
 ✅ GitHub Pages pronto para ativar
-✅ Railway pronto para deploy
+✅ Firebase Cloud Functions pronto para deploy
 ✅ Firebase credenciais prontas
 ✅ Documentação completa
 
@@ -212,4 +216,4 @@ Agora é só DEPLOY e TESTAR! 🚀
 
 **Sistema está 100% pronto para ir para produção!** 🎉
 
-Próximo paso: **Ativar GitHub Pages → Deploy Railway → Adicionar variáveis Firebase**
+Próximo passo: **Ativar GitHub Pages → Convert server/ → Deploy Cloud Functions**
