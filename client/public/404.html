@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM - Gestão de Contatos para Vendas</title>
+    <script>
+      // Redireciona 404s para index.html para SPA (Single Page Application)
+      // Técnica padrão para GitHub Pages com React Router
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      }());
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/sistemagestaoliga-es/src/main.jsx"></script>
+  </body>
+</html>
