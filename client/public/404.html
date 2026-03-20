@@ -4,20 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CRM - Gestão de Contatos para Vendas</title>
-    <script>
-      // Redireciona 404s para index.html para SPA (Single Page Application)
-      // Técnica padrão para GitHub Pages com React Router
+    <script type="text/javascript">
+      // Handle SPA routing on GitHub Pages
+      // When GitHub Pages serves 404.html, it means the route doesn't exist as a file
+      // For SPA, we need to serve index.html and let React Router handle the routing
+      
       (function() {
-        var redirect = sessionStorage.redirect;
-        delete sessionStorage.redirect;
-        if (redirect && redirect !== location.href) {
-          history.replaceState(null, null, redirect);
+        // Get the path from the 404 request
+        var l = window.location;
+        
+        // Avoid infinite redirect loop
+        if (l.pathname.indexOf('/sistemagestaoliga-es/') === 0) {
+          return;
         }
-      }());
+        
+        // Store the attempted path
+        if (l.search) {
+          sessionStorage.redirect = l.pathname + l.search;
+        } else {
+          sessionStorage.redirect = l.pathname;
+        }
+        
+        // Redirect to index.html
+        l.href = '/sistemagestaoliga-es/';
+      })();
     </script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/sistemagestaoliga-es/src/main.jsx"></script>
+    <noscript>
+      <p>Este site requer JavaScript habilitado.</p>
+    </noscript>
+    <!-- App runs from index.html via React -->
   </body>
 </html>

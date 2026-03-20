@@ -39,6 +39,10 @@ export const API_ENDPOINTS = {
   // Ligações
   LIGACOES_REGISTRAR: `${URLS.BASE}/ligacoes_registrar`,
   
+  // Dashboard
+  DASHBOARD: `${URLS.BASE}/dashboard`,
+  DASHBOARD_ALERTAS: `${URLS.BASE}/dashboard_alertas`,
+  
   // Health
   HEALTH: `${URLS.BASE}/health`,
 };

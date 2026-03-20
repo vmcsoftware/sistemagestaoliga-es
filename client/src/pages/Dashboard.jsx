@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Phone, CheckCircle, AlertCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { apiCall } from '../services/api';
+import API_ENDPOINTS from '../config/api-endpoints.js';
 import { Navbar } from '../components/Navbar';
 
 export const Dashboard = () => {
@@ -19,8 +20,8 @@ export const Dashboard = () => {
     try {
       setLoading(true);
       const [dashboardRes, alertasRes] = await Promise.all([
-        apiCall('GET', '/dashboard'),
-        apiCall('GET', '/dashboard/alertas'),
+        apiCall('GET', API_ENDPOINTS.DASHBOARD),
+        apiCall('GET', API_ENDPOINTS.DASHBOARD_ALERTAS),
       ]);
 
       if (dashboardRes.sucesso) {

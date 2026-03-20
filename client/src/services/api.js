@@ -177,4 +177,29 @@ export const healthService = {
   },
 };
 
+// ===========================
+// GENERIC API CALL
+// ===========================
+
+export const apiCall = async (method = 'GET', endpoint, data = null) => {
+  try {
+    let response;
+    const url = endpoint.startsWith('http') ? endpoint : `${API_ENDPOINTS.BASE || ''}${endpoint}`;
+    
+    if (method === 'GET') {
+      response = await apiClient.get(url);
+    } else if (method === 'POST') {
+      response = await apiClient.post(url, data);
+    } else if (method === 'PUT') {
+      response = await apiClient.put(url, data);
+    } else if (method === 'DELETE') {
+      response = await apiClient.delete(url);
+    }
+    
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { erro: error.message };
+  }
+};
+
 export default apiClient;
